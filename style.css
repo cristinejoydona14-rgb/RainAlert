@@ -1,0 +1,341 @@
+:root {
+  font-family: system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  color: #19334a;
+  background: #f3f7fb;
+  --header-bg: #0d2340;
+  --blue: #2f80ed;
+  --blue-dark: #1b5cc0;
+}
+
+/* The header color changes with the weather of the selected place */
+body.theme-clear  { --header-bg: #c4620f; }
+body.theme-clouds { --header-bg: #4a5b70; }
+body.theme-rain   { --header-bg: #1b4f9c; }
+body.theme-storm  { --header-bg: #23253a; }
+body.theme-mist   { --header-bg: #5a7076; }
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+
+/* ---------- Header ---------- */
+header {
+  position: relative;
+  overflow: hidden;
+  background: var(--header-bg);
+  color: white;
+  padding: 30px max(20px, calc((100vw - 1050px) / 2));
+}
+header > * {
+  position: relative;
+  z-index: 1;
+}
+header h1 {
+  margin: 0 0 5px;
+  font-size: clamp(1.5rem, 4vw, 2.3rem);
+}
+header p {
+  margin: 0;
+}
+.eyebrow {
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7fe2d3;
+  margin-bottom: 8px;
+}
+
+/* Animated rain in the header */
+header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 14px,
+    rgba(255, 255, 255, 0.22) 14px 15px
+  );
+  animation: rain 0.6s linear infinite;
+}
+body.theme-clear header::after,
+body.theme-clouds header::after,
+body.theme-mist header::after {
+  opacity: 0;
+}
+@keyframes rain {
+  to { background-position: 21.2px 21.2px; }
+}
+
+/* ---------- Layout ---------- */
+main {
+  max-width: 1050px;
+  margin: 20px auto;
+  padding: 0 18px;
+}
+.controls,
+.weather-panel {
+  background: white;
+  border: 1px solid #dce6ee;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.grid .weather-panel {
+  margin-bottom: 16px;
+  min-width: 0;
+}
+
+/* ---------- Controls ---------- */
+.controls label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 7px;
+}
+.key-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+input[type="password"] {
+  width: 100%;
+  max-width: 420px;
+  padding: 10px 12px;
+  border: 1px solid #a4bacb;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--blue);
+  color: white;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+button:hover {
+  background: var(--blue-dark);
+}
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid rgba(47, 128, 237, 0.45);
+}
+.hint {
+  font-size: 0.85rem;
+  color: #546579;
+  max-width: 800px;
+}
+.controls #status {
+  margin-bottom: 0;
+  font-weight: 600;
+}
+
+.layers {
+  border: 1px solid #dce6ee;
+  border-radius: 10px;
+  padding: 10px 14px 14px;
+  margin: 14px 0 0;
+}
+.layers legend {
+  font-weight: 700;
+  padding: 0 6px;
+}
+.controls .check {
+  display: inline-block;
+  font-weight: 400;
+  margin: 4px 14px 4px 0;
+  cursor: pointer;
+}
+.controls .opacity-label {
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: #546579;
+  margin-top: 10px;
+}
+input[type="range"] {
+  width: 100%;
+  max-width: 420px;
+}
+
+/* ---------- Map ---------- */
+.map-wrap {
+  position: relative;
+  margin-bottom: 16px;
+}
+#map {
+  height: 490px;
+  border-radius: 14px;
+  border: 1px solid #dce6ee;
+  z-index: 0;
+}
+#legend {
+  position: absolute;
+  left: 12px;
+  bottom: 26px;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.93);
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.legend-bar {
+  width: 170px;
+  height: 10px;
+  margin: 6px 0 3px;
+  border-radius: 6px;
+  background: linear-gradient(to right, #c8e6ff, #4aa3ff, #2f55d4, #8a2be2);
+}
+.legend-labels {
+  display: flex;
+  justify-content: space-between;
+  color: #546579;
+}
+.legend-dots {
+  margin-top: 6px;
+  display: flex;
+  gap: 12px;
+}
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 3px;
+}
+.dot-rain { background: #2f80ed; border: 2px solid #1b5cc0; }
+.dot-dry  { background: #b8c2cc; border: 2px solid #7d8a99; }
+
+/* ---------- Alert banner ---------- */
+.alert {
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.alert-rain  { background: #1b5cc0; color: white; }
+.alert-warn  { background: #ffe9a8; color: #6b4a00; }
+.alert-clear { background: #d9f5e3; color: #1d6b3a; }
+
+/* ---------- Weather panels ---------- */
+.weather-panel h2 {
+  font-size: 1.1rem;
+  margin: 0 0 10px;
+}
+.weather-card {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.weather-card .temperature {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0c6480;
+}
+.weather-card .description {
+  text-transform: capitalize;
+}
+.weather-card img {
+  width: 65px;
+  height: 65px;
+}
+
+.forecast {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+.fc-card {
+  flex: 0 0 auto;
+  min-width: 78px;
+  text-align: center;
+  background: #f3f7fb;
+  border-radius: 12px;
+  padding: 6px 8px;
+  font-size: 0.82rem;
+}
+.fc-card img {
+  width: 44px;
+  height: 44px;
+}
+.fc-temp { font-weight: 700; }
+.fc-pop  { color: #1b5cc0; }
+
+/* ---------- City list ---------- */
+.city-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 8px;
+}
+.city-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #f3f7fb;
+  border-radius: 10px;
+  padding: 6px 10px;
+}
+.city-list .placeholder {
+  grid-column: 1 / -1;
+  background: none;
+  color: #65758a;
+}
+.city-btn {
+  background: transparent;
+  color: #19334a;
+  padding: 4px 6px;
+  text-align: left;
+}
+.city-btn:hover {
+  background: #e3edf9;
+}
+.badge {
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #e3e8ee;
+  white-space: nowrap;
+}
+.badge.rain {
+  background: #d6e8ff;
+  color: #1b5cc0;
+  font-weight: 700;
+}
+
+footer {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #65758a;
+  padding: 12px;
+}
+/* ---------- Small screens ---------- */
+@media (max-width: 800px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  #map {
+    height: 60vh;
+  }
+}
+
+/* ---------- Respect "reduce motion" ---------- */
+@media (prefers-reduced-motion: reduce) {
+  header::after {
+    animation: none;
+  }
+}
